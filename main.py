@@ -105,7 +105,7 @@ class other(webapp2.RequestHandler):
 		apirequest.put()
 		try:	
 			APIRequest.query(ancestor=api_log_key())
-		except NeedIndexError
+		except NeedIndexError:
 			self.response.write("error")
 	
 			
