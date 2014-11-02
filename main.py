@@ -97,7 +97,7 @@ application = webapp2.WSGIApplication([
     ('/', MainPage),
 	('/post', postpage),
 	('/cp.*', couchpotato),
-	('/sb.*', sickbeard),
+	('/sb.*', couchpotato), #sickbeard),
 	('/plex', plex),
 	('/trans.*', transmission),
 	('/deluge.*', deluge)
