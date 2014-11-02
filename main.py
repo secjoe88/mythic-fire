@@ -57,7 +57,7 @@ class couchpotato(webapp2.RequestHandler):
 			except NeedIndexError:
 				self.response.write("No recent IP Address Updates")
 		else:
-			self.response.write("Prepared for api request call")
+			self.response.write(self.request.get('url'))
 ## /sb redirects to sickbeard			
 class sickbeard(webapp2.RequestHandler):
 	def get(self):
