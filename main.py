@@ -49,13 +49,15 @@ class postpage(webapp2.RequestHandler):
 ## /cp redirects to couchpotato		
 class couchpotato(webapp2.RequestHandler):
 	def get(self):
-		try:
-			iplog_query=IPAddr.query(ancestor=ip_log_key()).order(-IPAddr.date)
-			recent=iplog_query.fetch(1)
-			self.redirect(str("https://"+recent[0].address+":8083"))
-		except NeedIndexError:
-			self.response.write("No recent IP Address Updates")
-
+		if self.request.url=='https://mythic-fire-634.appspot.com/cp":
+			try:
+				iplog_query=IPAddr.query(ancestor=ip_log_key()).order(-IPAddr.date)
+				recent=iplog_query.fetch(1)
+				self.redirect(str("https://"+recent[0].address+":8083"))
+			except NeedIndexError:
+				self.response.write("No recent IP Address Updates")
+		else
+			self.response.write("Prepared for api request call")
 ## /sb redirects to sickbeard			
 class sickbeard(webapp2.RequestHandler):
 	def get(self):
@@ -98,7 +100,7 @@ class deluge(webapp2.RequestHandler):
 		except NeedIndexError:
 			self.response.write("No recent IP Address Updates")
 ## /other is used for testing api request support
-class other(webapp2.RequestHandler):
+class api(webapp2.RequestHandler):
 	def get(self):
 		apirequest=APIRequest(parent=api_log_key())
 		apirequest.url=self.request.get('url')
