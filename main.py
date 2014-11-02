@@ -28,7 +28,14 @@ def ip_log_key():
 class IPAddr(ndb.Model):
 	address=ndb.StringProperty()
 	date=ndb.DateTimeProperty(auto_now_add=True)
-
+	
+#method to create parent key for api_request_log
+DEFAULT_APILOG_NAME='apilog'
+def api_log_key():
+	return ndb.Key("APILog", DEFAULT_APILOG_NAME)
+##constructor for APIRequest entitities in the Datastore
+class APIRequest(ndb.Model):
+	url=ndb.StringProperty();
 	
 ## /post page receives POST request that updates server ip address, then stores it in the datastore	
 class postpage(webapp2.RequestHandler):	
@@ -90,15 +97,23 @@ class deluge(webapp2.RequestHandler):
 			self.redirect(str("https://"+recent[0].address+":8112"))
 		except NeedIndexError:
 			self.response.write("No recent IP Address Updates")
+## /other is used for testing api request support
+class other(webapp2.RequestHandler):
+	def get(self):
+		apirequest=APIRequest(parent=api_log_key())
+		apirequest.url=self.request.get('url')
+		apirequest.put()
+	
 			
 			
 
 application = webapp2.WSGIApplication([
-    ('/.*', MainPage),
+    ('/', MainPage),
 	('/post', postpage),
 	('/cp.*', couchpotato),
 	('/sb.*', sickbeard),
 	('/plex', plex),
 	('/trans.*', transmission),
-	('/deluge.*', deluge)
+	('/deluge.*', deluge),
+	('/.*', other)
 ], debug=True)
