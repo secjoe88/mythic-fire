@@ -94,7 +94,7 @@ class deluge(webapp2.RequestHandler):
 			
 
 application = webapp2.WSGIApplication([
-    ('/', MainPage),
+    ('/.*', MainPage),
 	('/post', postpage),
 	('/cp.*', couchpotato),
 	('/sb.*', sickbeard),
