@@ -120,6 +120,6 @@ application = webapp2.WSGIApplication([
 	('/sb.*', sickbeard),
 	('/plex', plex),
 	('/trans.*', transmission),
-	('/deluge.*', deluge),
-	('/.*', api)
+	('/deluge.*', deluge)#,
+	##('/.*', api)
 ], debug=True)
