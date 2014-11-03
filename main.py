@@ -49,15 +49,15 @@ class postpage(webapp2.RequestHandler):
 ## /cp redirects to couchpotato		
 class couchpotato(webapp2.RequestHandler):
 	def get(self):
-		if self.request.get('url')=='https://mythic-fire-634.appspot.com/cp':
+		#if self.request.get('url')=='https://mythic-fire-634.appspot.com/cp':
 			try:
 				iplog_query=IPAddr.query(ancestor=ip_log_key()).order(-IPAddr.date)
 				recent=iplog_query.fetch(1)
 				self.redirect(str("https://"+recent[0].address+":8083"))
 			except NeedIndexError:
 				self.response.write("No recent IP Address Updates")
-		else:
-			self.response.write(self.request.get('url'))
+		#else:
+			#self.response.write(self.request.get('url'))
 ## /sb redirects to sickbeard			
 class sickbeard(webapp2.RequestHandler):
 	def get(self):
