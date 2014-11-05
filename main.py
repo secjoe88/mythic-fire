@@ -64,7 +64,7 @@ class couchpotato(webapp2.RequestHandler):
 			try:
 				iplog_query=IPAddr.query(ancestor=ip_log_key()).order(-IPAddr.date)
 				recent=iplog_query.fetch(1)
-				self.redirect(str("https://"+recent[0].address+":8083"+re.findall('/api.*',self.request.path).pop()))
+				self.response.write(self.redirect(str("https://"+recent[0].address+":8083"+re.findall('/api.*',self.request.path).pop())).body)
 			except NeedIndexError:
 				self.response.write("No recent IP Address Updates")
 			
