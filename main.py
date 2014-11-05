@@ -61,7 +61,13 @@ class couchpotato(webapp2.RequestHandler):
 		#otherwise, assume it is an api request, forward the api request, get a response
 		#and return the response 
 		else:
-			self.redirect(str("https://"+recent[0].address+":8083"+re.findall('/api.*',self.request.path).pop()))
+			try:
+				iplog_query=IPAddr.query(ancestor=ip_log_key()).order(-IPAddr.date)
+				recent=iplog_query.fetch(1)
+				self.redirect(str("https://"+recent[0].address+":8083"+re.findall('/api.*',self.request.path).pop()))
+			except NeedIndexError:
+				self.response.write("No recent IP Address Updates")
+			
 ## /sb redirects to sickbeard			
 class sickbeard(webapp2.RequestHandler):
 	def get(self):
