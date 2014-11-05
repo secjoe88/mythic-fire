@@ -1,5 +1,6 @@
 ﻿#!/usr/bin/env python
-
+import re
+from pprint import pprint
 import webapp2
 from google.appengine.ext import ndb
 from google.appengine.ext.db import NeedIndexError
@@ -46,18 +47,21 @@ class postpage(webapp2.RequestHandler):
 		ipaddr.put()
 		self.response.write("IP Address: " + ip_address+ " stored in database")
 
-## /cp redirects to couchpotato		
+## /cp.* redirects to couchpotato	
 class couchpotato(webapp2.RequestHandler):
 	def get(self):
-		#if self.request.get('url')=='https://mythic-fire-634.appspot.com/cp':
+		#if the request is for the root object, http redirect to CouchPotato Server
+		if self.request.path=='/cp':
 			try:
 				iplog_query=IPAddr.query(ancestor=ip_log_key()).order(-IPAddr.date)
 				recent=iplog_query.fetch(1)
 				self.redirect(str("https://"+recent[0].address+":8083"))
 			except NeedIndexError:
 				self.response.write("No recent IP Address Updates")
-		#else:
-			#self.response.write(self.request.get('url'))
+		#otherwise, assume it is an api request, forward the api request, get a response
+		#and return the response 
+		else:
+			self.redirect(str("https://"+recent[0].address+":8083"+re.findall('/api.*',self.request.path).pop()))
 ## /sb redirects to sickbeard			
 class sickbeard(webapp2.RequestHandler):
 	def get(self):
@@ -100,15 +104,9 @@ class deluge(webapp2.RequestHandler):
 		except NeedIndexError:
 			self.response.write("No recent IP Address Updates")
 ## /other is used for testing api request support
-class api(webapp2.RequestHandler):
+class apitest(webapp2.RequestHandler):
 	def get(self):
-		apirequest=APIRequest(parent=api_log_key())
-		apirequest.url=self.request.get('url')
-		apirequest.put()
-		try:	
-			APIRequest.query(ancestor=api_log_key())
-		except NeedIndexError:
-			self.response.write("error")
+		self.response.write(self.request.path)
 	
 			
 			
@@ -120,6 +118,6 @@ application = webapp2.WSGIApplication([
 	('/sb.*', sickbeard),
 	('/plex', plex),
 	('/trans.*', transmission),
-	('/deluge.*', deluge)#,
-	##('/.*', api)
+	('/deluge.*', deluge),
+	('/.*api.*', apitest)
 ], debug=True)
