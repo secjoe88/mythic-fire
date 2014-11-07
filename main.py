@@ -1,6 +1,6 @@
 ﻿#!/usr/bin/env python
 import re
-from pprint import pprint
+import httplib
 import webapp2
 from google.appengine.ext import ndb
 from google.appengine.ext.db import NeedIndexError
@@ -58,13 +58,18 @@ class couchpotato(webapp2.RequestHandler):
 				self.redirect(str("https://"+recent[0].address+":8083"))
 			except NeedIndexError:
 				self.response.write("No recent IP Address Updates")
-		#otherwise, assume it is an api request, forward the api request, get a response
+		#otherwise, assume it is an api request, send the api request to cp, get a response
 		#and return the response 
 		else:
 			try:
 				iplog_query=IPAddr.query(ancestor=ip_log_key()).order(-IPAddr.date)
 				recent=iplog_query.fetch(1)
-				self.response.write(self.redirect(str("https://"+recent[0].address+":8083"+re.findall('/api.*',self.request.path).pop())).body)
+				cpcon=httplib.HTTPSConnection(str(recent+":8083"))
+				cpcon.connect()
+				apicall=re.findall('/api.*',self.request.path).pop()
+				cpcon.request("GET", apicall)
+				self.response.write(cpcon.getresponse().read())
+				cpcon.close()
 			except NeedIndexError:
 				self.response.write("No recent IP Address Updates")
 			
