@@ -63,8 +63,8 @@ class couchpotato(webapp2.RequestHandler):
 		else:
 			try:
 				iplog_query=IPAddr.query(ancestor=ip_log_key()).order(-IPAddr.date)
-				recent=str(iplog_query.fetch(1))
-				cpcon=httplib.HTTPSConnection(str(recent+":8083"))
+				recent=iplog_query.fetch(1)
+				cpcon=httplib.HTTPSConnection(str(recent[0].address+":8083"))
 				cpcon.connect()
 				apicall=re.findall('/api.*',self.request.path).pop()
 				cpcon.request("GET", apicall)
