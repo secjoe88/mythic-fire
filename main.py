@@ -69,7 +69,7 @@ class couchpotato(webapp2.RequestHandler):
 				apicall=re.findall('/api.*',self.request.path).pop()
 				cpcon.request("GET", apicall)
 				self.response.headerlist=cpcon.getresponse().getheaders()
-				self.response.body=cpcon.getresponse.read()
+				self.response.body=cpcon.getresponse().read()
 				self.response.status=cpon.getresponse().status
 				#self.response.write(str(cpcon.getresponse().getheaders())+'\n'+str(self.response.headerlist))
 				cpcon.close()
