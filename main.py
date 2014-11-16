@@ -79,12 +79,31 @@ class couchpotato(webapp2.RequestHandler):
 ## /sb redirects to sickbeard			
 class sickbeard(webapp2.RequestHandler):
 	def get(self):
-		try:
-			iplog_query=IPAddr.query(ancestor=ip_log_key()).order(-IPAddr.date)
-			recent=iplog_query.fetch(1)
-			self.redirect(str("https://"+recent[0].address+":8081"))
-		except NeedIndexError:
-			self.response.write("No recent IP Address Updates")
+		#if the request is for the root object, http redirect to SickBeard Server
+		if self.request.path=='/sb':
+			try:
+				iplog_query=IPAddr.query(ancestor=ip_log_key()).order(-IPAddr.date)
+				recent=iplog_query.fetch(1)
+				self.redirect(str("https://"+recent[0].address+":8081"))
+			except NeedIndexError:
+				self.response.write("No recent IP Address Updates")
+		#otherwise, assume it is an api request, send the api request to sb, get a response
+		#and return the response
+		else:
+			try:
+				iplog_query=IPAddr.query(ancestor=ip_log_key()).order(-IPAddr.date)
+				recent=iplog_query.fetch(1)
+				sbcon=httplib.HTTPSConnection(str(recent[0].address+":8081"), timeout=100)
+				sbcon.connect()
+				apicall=re.findall('/api.*',self.request.path).pop()
+				sbcon.request("GET", apicall)
+				self.response.headerlist=sbcon.getresponse().getheaders()
+				self.response.body=sbcon.getresponse().read()
+				self.response.status=sbcon.getresponse().status
+				#self.response.write(str(cpcon.getresponse().getheaders())+'\n'+str(self.response.headerlist))
+				sbcon.close()
+			except NeedIndexError:
+				self.response.write("No recent IP Address Updates")
 			
 ## /plex redirects to plex			
 class plex(webapp2.RequestHandler):
