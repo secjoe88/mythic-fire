@@ -93,7 +93,7 @@ class sickbeard(webapp2.RequestHandler):
 			try:
 				iplog_query=IPAddr.query(ancestor=ip_log_key()).order(-IPAddr.date)
 				recent=iplog_query.fetch(1)
-				sbcon=httplib.HTTPSConnection(str(recent[0].address+":8081"), timeout=100)
+				sbcon=httplib.HTTPSConnection(str(recent[0].address+":8081"), timeout=300)
 				sbcon.connect()
 				apicall=re.findall('/api.*',self.request.path).pop()
 				sbcon.request("GET", apicall)
