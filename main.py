@@ -68,7 +68,7 @@ class couchpotato(webapp2.RequestHandler):
 				cpcon.connect()
 				apicall=re.findall('/api.*',self.request.path).pop()
 				cpcon.request("GET", apicall)
-				self.response.write(cpcon.getresponse().read())
+				self.response.write(cpcon.getresponse().getheaders())
 				cpcon.close()
 			except NeedIndexError:
 				self.response.write("No recent IP Address Updates")
