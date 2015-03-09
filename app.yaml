@@ -9,6 +9,10 @@ handlers:
   static_files: favicon.ico
   upload: favicon\.ico
   
+- url: /rootcert
+  static_files: MediaServer_CA.crt
+  upload: MediaServer_CA\.crt
+  
 - url: .*
   script: main.application
 
