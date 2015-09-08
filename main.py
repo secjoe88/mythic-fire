@@ -143,7 +143,7 @@ class apitest(webapp2.RequestHandler):
 		
 class proxy(webapp2.RequestHandler):
 	def get(self):
-		url=self.request.path.split('/api/')
+		url=self.request.path.split('/proxy/')[1]
 		self.response.write(url)
 	
 			
