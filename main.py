@@ -158,5 +158,5 @@ application = webapp2.WSGIApplication([
 	('/trans.*', transmission),
 	('/deluge.*', deluge),
 	('/.*api.*', apitest),
-	('/proxy,proxy)
+	('/proxy',proxy)
 ], debug=True)
