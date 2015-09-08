@@ -140,6 +140,11 @@ class deluge(webapp2.RequestHandler):
 class apitest(webapp2.RequestHandler):
 	def get(self):
 		self.response.write(self.request.path)
+		
+class proxy(webapp2.RequestHandler):
+	def get(self):
+		url=self.request.path.split('/api/')
+		self.response.write(url)
 	
 			
 			
@@ -152,5 +157,6 @@ application = webapp2.WSGIApplication([
 	('/plex', plex),
 	('/trans.*', transmission),
 	('/deluge.*', deluge),
-	('/.*api.*', apitest)
+	('/.*api.*', apitest),
+	('/proxy,proxy)
 ], debug=True)
